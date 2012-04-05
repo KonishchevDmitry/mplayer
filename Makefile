@@ -712,8 +712,8 @@ ALL_PRG-$(MPLAYER)  += mplayer$(EXESUF)
 ALL_PRG-$(MENCODER) += mencoder$(EXESUF)
 
 INSTALL_TARGETS-$(GUI)      += install-gui
-INSTALL_TARGETS-$(MENCODER) += install-mencoder install-mencoder-man
-INSTALL_TARGETS-$(MPLAYER)  += install-mplayer  install-mplayer-man
+INSTALL_TARGETS-$(MENCODER) += install-mencoder #install-mencoder-man
+INSTALL_TARGETS-$(MPLAYER)  += install-mplayer  #install-mplayer-man
 
 DIRS =  . \
         gui \
@@ -904,7 +904,7 @@ $(VIDIX_OBJS): $(VIDIX_PCI_FILES)
 install: $(INSTALL_TARGETS-yes)
 
 install-dirs:
-	$(INSTALL) -d $(BINDIR) $(CONFDIR) $(LIBDIR)
+	$(INSTALL) -d $(BINDIR) #$(CONFDIR) $(LIBDIR)
 
 install-%: %$(EXESUF) install-dirs
 	$(INSTALL) -m 755 $(INSTALLSTRIP) $< $(BINDIR)
