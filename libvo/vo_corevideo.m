@@ -60,6 +60,7 @@ OSType pixelFormat;
 BOOL shared_buffer = false;
 #define DEFAULT_BUFFER_NAME "mplayerosx"
 static char *buffer_name;
+BOOL rgb_only = false;
 
 //Screen
 int screen_id = -1;
@@ -308,6 +309,9 @@ static int query_format(uint32_t format)
     const int supportflags = VFCAP_CSP_SUPPORTED | VFCAP_CSP_SUPPORTED_BY_HW | VFCAP_OSD | VFCAP_HWSCALE_UP | VFCAP_HWSCALE_DOWN;
 	image_format = format;
 
+	if(rgb_only && format != IMGFMT_RGB24)
+		return 0;
+
     switch(format)
 	{
 		case IMGFMT_YUY2:
@@ -354,6 +358,7 @@ static const opt_t subopts[] = {
 {"device_id",     OPT_ARG_INT,  &screen_id,     NULL},
 {"shared_buffer", OPT_ARG_BOOL, &shared_buffer, NULL},
 {"buffer_name",   OPT_ARG_MSTRZ,&buffer_name,   NULL},
+{"rgb_only",      OPT_ARG_BOOL, &rgb_only,      NULL},
 {NULL}
 };
 
@@ -364,6 +369,7 @@ static int preinit(const char *arg)
 	screen_id = -1;
 	shared_buffer = false;
 	buffer_name = NULL;
+	rgb_only = false;
 
 	if (subopt_parse(arg, subopts) != 0) {
 		mp_msg(MSGT_VO, MSGL_FATAL,
@@ -378,6 +384,8 @@ static int preinit(const char *arg)
 				"    Name of the shared buffer created with shm_open() as well as\n"
 				"    the name of the NSConnection MPlayer will try to open.\n"
 				"    Setting buffer_name implicitly enables shared_buffer.\n"
+				"  rgb_only\n"
+				"    Write output to the shared memory buffer in RGB24 format.\n"
 				"\n" );
 		return -1;
 	}
@@ -391,6 +399,8 @@ static int preinit(const char *arg)
 
 	if(!shared_buffer)
 	{
+		rgb_only = false;
+
 		NSApplicationLoad();
 		NSApp = [NSApplication sharedApplication];
 		isLeopardOrLater = floor(NSAppKitVersionNumber) > 824;
